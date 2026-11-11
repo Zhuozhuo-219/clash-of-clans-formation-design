@@ -1,0 +1,147 @@
+{
+  "date": "2026-11-10",
+  "record_counts": {
+    "buildings": 43,
+    "traps": 8,
+    "guardians": 3,
+    "troops": 32,
+    "super_troops": 17,
+    "heroes": 6,
+    "pets": 12,
+    "spells": 18,
+    "siege_machines": 9,
+    "hero_equipment": 43,
+    "helpers": 4,
+    "crafted_defenses": 3,
+    "seasonal_or_region_specific": 7
+  },
+  "total_records": 205,
+  "supercharge_types": 18,
+  "actual_post_merge_supercharges": 135,
+  "fixed_placement_objects": 467,
+  "missing_data_risk": "high for mainland combat values",
+  "known_issues": [
+    {
+      "id": "CN-01",
+      "severity": "blocking",
+      "field_paths": [
+        "*.verification.server_value_scope"
+      ],
+      "summary": "缺少2026年11月10日腾讯国服客户端解包/官方战斗数据；国际资料可作为种子但不视为国服认证。",
+      "resolution": "获取当前国服客户端表并逐ID/等级/字段哈希对照。"
+    },
+    {
+      "id": "COUNT-01",
+      "severity": "resolved_with_precedence",
+      "field_paths": [
+        "buildings[*].count_max_placed"
+      ],
+      "summary": "部分未处理合并的网站显示7加农炮/9箭塔/6法师塔。采用已合并的0/2/2。",
+      "resolution": "来源：ClashRecord + 1337Wiki，并考虑Super Wizard Tower消耗。"
+    },
+    {
+      "id": "COUNT-02",
+      "severity": "resolved_with_precedence",
+      "field_paths": [
+        "traps.air_bomb.count_max_placed"
+      ],
+      "summary": "ClashRecord写空中炸弹7，但cocwiki、coc.tools、GiBiArena所载TH18为8。",
+      "resolution": "采用8，保留不一致记录。"
+    },
+    {
+      "id": "COUNT-03",
+      "severity": "resolved_with_precedence",
+      "field_paths": [
+        "buildings.multi_archer_tower.count_max_placed"
+      ],
+      "summary": "coc.tools超级充能汇总错误显示4个多人箭塔；完整防御列表与其他数据库为3。",
+      "resolution": "采用3，超级充能总数量需自行重新统计。"
+    },
+    {
+      "id": "BALANCE-01",
+      "severity": "resolved_by_official_patch",
+      "field_paths": [
+        "buildings.revenge_tower.attack.attack_interval_seconds",
+        "buildings.revenge_tower.attack.attack_modes"
+      ],
+      "summary": "旧第三方网页记载反击之塔攻击间隔1.2s及5/20/40层；官方2026-02-02修改为0.35s与5/25/50。",
+      "resolution": "优先官方中文平衡补丁；每阶段DPS继续待核。"
+    },
+    {
+      "id": "BALANCE-02",
+      "severity": "resolved_by_official_patch",
+      "field_paths": [
+        "buildings.multi_archer_tower.attack.attack_interval_seconds"
+      ],
+      "summary": "官方2026-02-02把多人箭塔攻击间隔从0.5s变为0.6s。",
+      "resolution": "采用0.6s；网页对DPS vs单击伤害单位存在混淆。"
+    },
+    {
+      "id": "SUPER-01",
+      "severity": "needs_test",
+      "field_paths": [
+        "buildings.wizard_tower.supercharge"
+      ],
+      "summary": "部分旧资源列出法师塔超级充能，但2026-11 TH18最新列表未列。",
+      "resolution": "按当前超级充能18项清单记eligible=false，待实机检查。"
+    },
+    {
+      "id": "MODE-01",
+      "severity": "needs_game_client",
+      "field_paths": [
+        "buildings.inferno_tower.attack",
+        "buildings.multi_gear_tower.attack",
+        "buildings.revenge_tower.attack"
+      ],
+      "summary": "模式DPS受目标数、成长/反击阶段与攻击周期影响，公开简表不足以精确推演。",
+      "resolution": "后续存储模式公式、分段函数、buff及特殊单位免疫规则。"
+    },
+    {
+      "id": "CRAFT-01",
+      "severity": "constraint",
+      "field_paths": [
+        "crafted_defenses",
+        "buildings.crafting_station"
+      ],
+      "summary": "三种精制防御不能同时部署，且防御效果随轮次重置。",
+      "resolution": "增加唯一放置槽；切换仅允许一个激活。"
+    },
+    {
+      "id": "GUARD-01",
+      "severity": "constraint",
+      "field_paths": [
+        "guardians"
+      ],
+      "summary": "三位守卫可解锁，但防守仅可启用一个。",
+      "resolution": "后续阵型引擎从三个守卫中选择一个，随大本营防守。"
+    },
+    {
+      "id": "TIME-01",
+      "severity": "scope",
+      "field_paths": [
+        "metadata"
+      ],
+      "summary": "2026年11月Hammer Jam暂时将资源产量/容量翻倍，不能当作永久充能属性。",
+      "resolution": "不将限时buff写入基本战斗基准；允许场景层叠加。"
+    },
+    {
+      "id": "TH19-01",
+      "severity": "snapshot",
+      "field_paths": [
+        "metadata.as_of"
+      ],
+      "summary": "截至2026-11-10官方预告19本于11月中旬，当前依然以18本为快照。",
+      "resolution": "每个版本留存快照，新补丁后升级版本号。"
+    },
+    {
+      "id": "METRIC-01",
+      "severity": "blocking",
+      "field_paths": [
+        "*.attack.*",
+        "*.max_level_stats.*"
+      ],
+      "summary": "攻击范围、触发范围、索敌范围、弹射半径、溅射半径及射速是不同量，DPS不等于单击伤害，未查到的必须null。",
+      "resolution": "导入国服数值时先规范单位/模式，再计算真实有效DPS。"
+    }
+  ]
+}
