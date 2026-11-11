@@ -1,0 +1,265 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1.0">
+<title>TH18 · 44×44 网格与下兵线实验室</title>
+<style>
+:root{color-scheme:dark;--bg:#101724;--panel:#182234;--panel2:#213047;--line:#30435b;--text:#edf5ff;--muted:#a5b5c9;--accent:#7ce5d0;--accent2:#ffc87b}
+*{box-sizing:border-box}body{margin:0;background:var(--bg);color:var(--text);font-family:Inter,-apple-system,BlinkMacSystemFont,"PingFang SC","Microsoft YaHei",sans-serif;font-size:14px;line-height:1.5}
+header{display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:12px;padding:15px 22px;border-bottom:1px solid var(--line);background:#131d2c}
+.brand{display:flex;align-items:center;gap:12px}.logo{background:linear-gradient(135deg,#69d3b7,#4e92b0);color:#071725;border-radius:10px;font-weight:900;padding:9px 12px}.brand h1{font-size:18px;line-height:1.25;margin:0}.brand small{display:block;color:var(--muted);font-size:11px;margin-top:4px}
+header .actions,.toolbar,.tools,.controls,.row-buttons{display:flex;align-items:center;gap:7px;flex-wrap:wrap}
+button,select,input{font:inherit}button,select{border:1px solid #3b506a;border-radius:8px;background:#24344c;color:var(--text);padding:8px 11px;cursor:pointer}button:hover,select:hover{border-color:#6b8da8;background:#2d405a}button:disabled{opacity:.35;cursor:not-allowed}button.primary{background:#0f796e;border-color:#339d91;font-weight:700}button.primary:hover{background:#149082}button.tool.active,button.view.active{background:#306158;border-color:#7ce5d0;color:#ebfff8;box-shadow:inset 0 0 0 1px #78dcca44}button.danger{color:#ffb7b0}
+main{display:grid;grid-template-columns:295px minmax(0,1fr);gap:0;min-height:calc(100vh - 70px)}aside{background:var(--panel);border-right:1px solid var(--line);padding:16px;max-height:calc(100vh - 70px);overflow-y:auto}aside section+section{margin-top:18px;padding-top:15px;border-top:1px solid var(--line)}h2{font-size:13px;margin:0 0 9px;letter-spacing:.02em}p{margin:6px 0;color:var(--muted);font-size:12px}
+.segment{display:grid;grid-template-columns:repeat(3,1fr);gap:5px;margin-bottom:9px}.segment button{font-size:12px;padding:7px 2px}.segment button.active{border-color:#7ce5d0;color:#7ce5d0;background:#213f42}
+input[type=search],select{width:100%;min-width:0}input[type=search]{background:#101b2b;border:1px solid #3b506a;border-radius:8px;color:var(--text);padding:9px 10px;margin-bottom:8px}
+#picker{height:38px}#chosen{margin-top:10px;background:#132439;border:1px solid #29435b;border-radius:10px;padding:10px;color:var(--muted);min-height:65px;font-size:12px}#chosen b{display:block;color:var(--text);font-size:14px;margin-bottom:3px}
+.legend{display:grid;grid-template-columns:16px 1fr;gap:7px 9px;font-size:12px;color:var(--muted);align-items:center}.sw{width:14px;height:14px;border-radius:3px;border:1px solid #ffffff55}.sw.boundary{background:#fff}.sw.mask{background:#be7db1}.sw.deploy{background:#5dab86}.sw.trap{background:#dd9b68}
+.check{display:flex;align-items:center;gap:9px;margin:7px 0;font-size:12px;color:#d3dce7;cursor:pointer}.check input{accent-color:#7ce5d0}
+.stage{position:relative;display:flex;flex-direction:column;min-width:0;padding:12px;gap:10px}.toolbar{background:#182437;border:1px solid #31445d;border-radius:12px;padding:9px 10px;justify-content:space-between;gap:12px}.tools button,.toolbar button{font-size:12px;padding:8px 10px}.stageview{flex:1;position:relative;min-height:570px;background:#101d29;border:1px solid #32485c;overflow:hidden;border-radius:16px;box-shadow:0 14px 28px #0004}
+canvas{position:absolute;inset:0;display:block;width:100%;height:100%;touch-action:none;cursor:crosshair}.hud{position:absolute;bottom:14px;left:14px;right:14px;display:flex;flex-wrap:wrap;gap:9px;pointer-events:none}.pill{background:#101c2ee6;border:1px solid #456078;border-radius:30px;padding:5px 12px;color:#e7f5ff;font-size:12px;backdrop-filter:blur(10px)}.pill strong{color:#8ef2df}
+.toast{position:absolute;top:16px;left:50%;transform:translateX(-50%);padding:7px 14px;border:1px solid #5b859c;border-radius:9px;background:#182a3cf2;color:#fff;pointer-events:none;opacity:0;transition:opacity .2s;max-width:85%;font-size:13px;z-index:10}.toast.show{opacity:1}.status{border:1px solid #2e4155;background:#151e2e;border-radius:10px;padding:10px 13px;display:flex;gap:14px;justify-content:space-between;align-items:center;flex-wrap:wrap;color:var(--muted);font-size:12px}.status #stat{color:#e6f8f0;font-variant-numeric:tabular-nums}
+.note{background:#1d2a3d;padding:10px 12px;border-left:3px solid #7ce5d0;border-radius:5px;margin-top:8px}.note strong{color:#d6f6ec}
+@media(max-width:850px){main{grid-template-columns:1fr}aside{max-height:none;border-right:0;border-bottom:1px solid var(--line)}.stage{padding:8px}.stageview{min-height:440px}.brand h1{font-size:15px}header{padding:11px}.toolbar{gap:8px}.tools button{padding:7px 8px}}
+</style>
+</head>
+<body>
+<header>
+ <div class="brand"><div class="logo">18</div><div><h1>阵型网格 · 下兵线实验室</h1><small>44 × 44 ｜ 中国大陆18本资料快照 2026-11-10 ｜ Prototype v0.1.1</small></div></div>
+ <div class="actions"><button id="demo">载入示例</button><button id="save" class="primary">导出阵型 JSON</button><button id="load">导入 JSON</button><button id="shot">保存画布 PNG</button><input id="file" type="file" accept="application/json,.json" hidden></div>
+</header>
+<main>
+<aside>
+ <section><h2>建筑与陷阱</h2><div class="segment" id="groups"><button class="active" data-group="all">全部</button><button data-group="core">核心</button><button data-group="defense">防御</button><button data-group="wall">城墙</button><button data-group="resource">资源</button><button data-group="utility">其他</button><button data-group="trap">陷阱</button></div>
+ <input id="search" type="search" placeholder="搜索建筑（例如：特斯拉）" aria-label="搜索建筑"><select id="picker" aria-label="选择建筑"></select><div id="chosen"></div></section>
+ <section><h2>画面显示</h2>
+ <label class="check"><input type="checkbox" id="showGrid" checked>网格线</label>
+ <label class="check"><input type="checkbox" id="showTint" checked>禁下兵区域半透明填色</label>
+ <label class="check"><input type="checkbox" id="showBoundary" checked>白色下兵线（并集轮廓）</label>
+ <label class="check"><input type="checkbox" id="showHoles" checked>标记内部可下兵空洞</label>
+ <label class="check"><input type="checkbox" id="showCoord">坐标刻度</label>
+ </section>
+ <section><h2>规则图例</h2><div class="legend"><i class="sw boundary"></i><span>白线：禁止下兵区域的边界</span><i class="sw mask"></i><span>紫色：禁止下兵区域</span><i class="sw deploy"></i><span>绿色底色：允许测试下兵的位置（仅静态规则）</span><i class="sw trap"></i><span>橙色标记：陷阱 / 隐藏特斯拉，不产生边界</span></div>
+ <div class="note"><p><strong>重要：</strong>普通建筑及城墙各向外扩展1格后取并集；特斯拉、陷阱既占摆放格，却不独立产生禁下兵圈。白线内部的空洞如未被禁区覆盖，仍可以下兵。</p></div></section>
+ <section><h2>操作说明</h2><p>「放置」后点击格子放置建筑；选城墙可拖动画墙。使用「选择/移动」可拖动已放建筑；右键删除。用「试下兵」点击任意格，检查是否允许。滚轮缩放，按住空格或选「平移」拖动；撤销 Ctrl+Z。</p><p>目前只检验数量、矩形占位和静态下兵圈。地图四角可放置性、客户端精确白线绘制和战斗中变化仍待国服核验。</p></section>
+</aside>
+<div class="stage">
+ <div class="toolbar"><div class="tools" id="tools"><button data-tool="select" class="tool active">选择 / 移动</button><button data-tool="place" class="tool">放置</button><button data-tool="test" class="tool">试下兵</button><button data-tool="erase" class="tool">擦除</button><button data-tool="pan" class="tool">平移</button></div><div class="controls"><button class="view active" data-view="iso">菱形视图</button><button class="view" data-view="top">俯视视图</button><button id="undo" title="撤销">↶</button><button id="redo" title="重做">↷</button><button id="clear" class="danger">清空</button></div></div>
+ <div class="stageview" id="viewport"><canvas id="board" aria-label="44乘44可编辑网格画布"></canvas><div class="toast" id="toast"></div><div class="hud"><span class="pill" id="hoverText">坐标：—</span><span class="pill" id="deployText">下兵状态：—</span><span class="pill" id="selectedText">选择：—</span></div></div>
+ <div class="status"><span id="stat">正在初始化...</span><span>本地自动存档（若浏览器允许） · 文件离线可用 · 非游戏客户端导入链接</span></div>
+</div>
+</main>
+<script>
+/* Embedded, auditable topology core. A standalone copy is topology.js. */
+/* TH18 44x44 static layout geometry / deployment mask v0.1.0
+ * The one-tile square expansion is a research baseline, not a CN-client certified simulation.
+ * No-deploy generator: ordinary placed buildings and walls YES; traps and Hidden Tesla NO.
+ */
+(function (root, factory) {
+  const api = factory();
+  if (typeof module === 'object' && module.exports) module.exports = api;
+  if (root) root.TH18Topology = api;
+})(typeof globalThis !== 'undefined' ? globalThis : this, function () {
+  'use strict';
+  const GRID = 44;
+  const key = (x, y) => x + ',' + y;
+  function blockDims(b, catalog) {
+    const meta = catalog[b.id];
+    return meta ? { w: meta.w, h: meta.h } : null;
+  }
+  function boundsCheck(x, y, w, h, n = GRID) {
+    return [x,y,w,h].every(Number.isInteger) && w > 0 && h > 0 && x >= 0 && y >= 0 && x + w <= n && y + h <= n;
+  }
+  function isSource(meta) { return !!meta && meta.zoneSource === true; }
+  function placementCheck(objects, catalog, candidate, ignoreUid = null, n = GRID) {
+    const meta = catalog[candidate.id];
+    if (!meta) return {ok:false, reason:'没有此建筑数据'};
+    if (!boundsCheck(candidate.x,candidate.y,meta.w,meta.h,n)) return {ok:false, reason:'建筑超出44×44画布'};
+    let ownCount = 0;
+    for (const old of objects) {
+      if (old.uid === ignoreUid) continue;
+      if (old.id === candidate.id) ownCount++;
+      const om = catalog[old.id];
+      if (!om) continue;
+      if (candidate.x < old.x + om.w && candidate.x + meta.w > old.x && candidate.y < old.y + om.h && candidate.y + meta.h > old.y) {
+        return {ok:false, reason:'与 ' + om.name + ' 占位重叠'};
+      }
+    }
+    if (ownCount >= meta.max) return {ok:false, reason:meta.name + ' 数量已达上限 '+meta.max};
+    return {ok:true, reason:'位置合法（仅校验边界、数量与重叠）'};
+  }
+  function deploymentMask(objects, catalog, n = GRID) {
+    // The mask deliberately includes coordinates -1 and n to trace white contours at the edge.
+    const tiles = new Set();
+    for (const b of objects) {
+      const meta = catalog[b.id];
+      if (!isSource(meta)) continue;
+      for (let y = b.y - 1; y <= b.y + meta.h; y++) {
+        for (let x = b.x - 1; x <= b.x + meta.w; x++) {
+          tiles.add(key(x, y));
+        }
+      }
+    }
+    return tiles;
+  }
+  function boundaryEdges(mask) {
+    const edges = [];
+    for (const cell of mask) {
+      const [x,y] = cell.split(',').map(Number);
+      if (!mask.has(key(x,y-1))) edges.push([x,y,x+1,y]);
+      if (!mask.has(key(x+1,y))) edges.push([x+1,y,x+1,y+1]);
+      if (!mask.has(key(x,y+1))) edges.push([x+1,y+1,x,y+1]);
+      if (!mask.has(key(x-1,y))) edges.push([x,y+1,x,y]);
+    }
+    return edges;
+  }
+  function deploymentStatus(x, y, mask, n = GRID) {
+    if (!Number.isInteger(x) || !Number.isInteger(y)) return 'unknown';
+    if (x < 0 || y < 0 || x >= n || y >= n) return 'outside_canvas';
+    return mask.has(key(x,y)) ? 'blocked' : 'allowed';
+  }
+  function allowedRegions(mask, n = GRID) {
+    // 4-connected regions in tile space: one outside-connected region plus possible enclosed spawn holes.
+    const seen = new Uint8Array(n*n), regions = [];
+    const dirs = [[1,0],[-1,0],[0,1],[0,-1]];
+    for (let y=0;y<n;y++) for (let x=0;x<n;x++) {
+      const index=y*n+x;
+      if(seen[index] || mask.has(key(x,y))) continue;
+      const cells=[], queue=[[x,y]];seen[index]=1;
+      let boundary=false,minX=x,minY=y,maxX=x,maxY=y;
+      for(let head=0;head<queue.length;head++){
+        const [cx,cy]=queue[head];cells.push([cx,cy]);
+        minX=Math.min(minX,cx);minY=Math.min(minY,cy);maxX=Math.max(maxX,cx);maxY=Math.max(maxY,cy);
+        if(cx===0||cy===0||cx===n-1||cy===n-1)boundary=true;
+        for(const [dx,dy] of dirs){const nx=cx+dx,ny=cy+dy;
+          if(nx<0||ny<0||nx>=n||ny>=n)continue;
+          const i=ny*n+nx;
+          if(seen[i]||mask.has(key(nx,ny)))continue;
+          seen[i]=1;queue.push([nx,ny]);
+        }
+      }
+      regions.push({size:cells.length,connects_to_map_edge:boundary,bounds:[minX,minY,maxX,maxY],cells});
+    }
+    return regions;
+  }
+  function stats(objects, catalog, n=GRID) {
+    const mask = deploymentMask(objects,catalog,n);
+    let inside=0;
+    for(let y=0;y<n;y++) for(let x=0;x<n;x++) if(mask.has(key(x,y))) inside++;
+    const regions=allowedRegions(mask,n), holes=regions.filter(r=>!r.connects_to_map_edge);
+    return {n, total:n*n, blocked:inside, allowed:n*n-inside, sources:objects.filter(o=>isSource(catalog[o.id])).length, objects:objects.length, edges:boundaryEdges(mask).length, spawn_holes:holes.length, spawn_hole_cells:holes.reduce((a,r)=>a+r.size,0)};
+  }
+  function validateLayout(objects, catalog, n=GRID) {
+    const problems=[];
+    const checked=[];
+    for(const obj of objects){
+      const v=placementCheck(checked,catalog,obj,null,n);
+      if (!v.ok) problems.push({uid:obj.uid, id:obj.id, reason:v.reason});
+      checked.push(obj);
+    }
+    return problems;
+  }
+  return {GRID,key,boundsCheck,placementCheck,deploymentMask,boundaryEdges,deploymentStatus,allowedRegions,stats,validateLayout};
+});
+
+</script>
+<script>
+'use strict';
+const CATALOG_RECORDS = [{"id":"town_hall","name":"大本营","name_en":"Town Hall","w":4,"h":4,"max":1,"group":"core","zoneSource":true},{"id":"crafting_station","name":"精制台","name_en":"Crafting Station","w":3,"h":3,"max":1,"group":"core","zoneSource":true},{"id":"archer_tower","name":"箭塔","name_en":"Archer Tower","w":3,"h":3,"max":2,"group":"defense","zoneSource":true},{"id":"mortar","name":"迫击炮","name_en":"Mortar","w":3,"h":3,"max":4,"group":"defense","zoneSource":true},{"id":"air_defense","name":"防空火箭","name_en":"Air Defense","w":3,"h":3,"max":4,"group":"defense","zoneSource":true},{"id":"wizard_tower","name":"法师塔","name_en":"Wizard Tower","w":3,"h":3,"max":2,"group":"defense","zoneSource":true},{"id":"air_sweeper","name":"空气炮","name_en":"Air Sweeper","w":2,"h":2,"max":2,"group":"defense","zoneSource":true},{"id":"hidden_tesla","name":"特斯拉电磁塔","name_en":"Hidden Tesla","w":2,"h":2,"max":5,"group":"defense","zoneSource":false},{"id":"bomb_tower","name":"炸弹塔","name_en":"Bomb Tower","w":3,"h":3,"max":2,"group":"defense","zoneSource":true},{"id":"x_bow","name":"十字连弩","name_en":"X-Bow","w":3,"h":3,"max":4,"group":"defense","zoneSource":true},{"id":"inferno_tower","name":"地狱之塔","name_en":"Inferno Tower","w":2,"h":2,"max":3,"group":"defense","zoneSource":true},{"id":"scattershot","name":"投石炮","name_en":"Scattershot","w":3,"h":3,"max":2,"group":"defense","zoneSource":true},{"id":"builder_s_hut","name":"建筑工人小屋","name_en":"Builder's Hut","w":2,"h":2,"max":5,"group":"defense","zoneSource":true},{"id":"spell_tower","name":"法术塔","name_en":"Spell Tower","w":2,"h":2,"max":2,"group":"defense","zoneSource":true},{"id":"monolith","name":"擎天巨柱","name_en":"Monolith","w":3,"h":3,"max":1,"group":"defense","zoneSource":true},{"id":"multi_archer_tower","name":"多人箭塔","name_en":"Multi-Archer Tower","w":3,"h":3,"max":3,"group":"defense","zoneSource":true},{"id":"ricochet_cannon","name":"跳弹加农炮","name_en":"Ricochet Cannon","w":3,"h":3,"max":3,"group":"defense","zoneSource":true},{"id":"multi_gear_tower","name":"复合机械塔","name_en":"Multi-Gear Tower","w":3,"h":3,"max":1,"group":"defense","zoneSource":true},{"id":"firespitter","name":"火焰喷射器","name_en":"Firespitter","w":3,"h":3,"max":2,"group":"defense","zoneSource":true},{"id":"revenge_tower","name":"反击之塔","name_en":"Revenge Tower","w":3,"h":3,"max":1,"group":"defense","zoneSource":true},{"id":"super_wizard_tower","name":"超级法师塔","name_en":"Super Wizard Tower","w":3,"h":3,"max":2,"group":"defense","zoneSource":true},{"id":"wall","name":"城墙","name_en":"Wall","w":1,"h":1,"max":325,"group":"wall","zoneSource":true},{"id":"gold_mine","name":"金矿","name_en":"Gold Mine","w":3,"h":3,"max":7,"group":"resource","zoneSource":true},{"id":"elixir_collector","name":"圣水收集器","name_en":"Elixir Collector","w":3,"h":3,"max":7,"group":"resource","zoneSource":true},{"id":"dark_elixir_drill","name":"暗黑重油钻井","name_en":"Dark Elixir Drill","w":3,"h":3,"max":3,"group":"resource","zoneSource":true},{"id":"gold_storage","name":"储金罐","name_en":"Gold Storage","w":3,"h":3,"max":4,"group":"resource","zoneSource":true},{"id":"elixir_storage","name":"圣水瓶","name_en":"Elixir Storage","w":3,"h":3,"max":4,"group":"resource","zoneSource":true},{"id":"dark_elixir_storage","name":"暗黑重油罐","name_en":"Dark Elixir Storage","w":3,"h":3,"max":1,"group":"resource","zoneSource":true},{"id":"army_camp","name":"兵营","name_en":"Army Camp","w":5,"h":5,"max":4,"group":"utility","zoneSource":true},{"id":"barracks","name":"训练营","name_en":"Barracks","w":3,"h":3,"max":1,"group":"utility","zoneSource":true},{"id":"clan_castle","name":"部落城堡","name_en":"Clan Castle","w":3,"h":3,"max":1,"group":"utility","zoneSource":true},{"id":"laboratory","name":"实验室","name_en":"Laboratory","w":3,"h":3,"max":1,"group":"utility","zoneSource":true},{"id":"spell_factory","name":"法术工厂","name_en":"Spell Factory","w":3,"h":3,"max":1,"group":"utility","zoneSource":true},{"id":"dark_barracks","name":"暗黑训练营","name_en":"Dark Barracks","w":3,"h":3,"max":1,"group":"utility","zoneSource":true},{"id":"dark_spell_factory","name":"暗黑法术工厂","name_en":"Dark Spell Factory","w":3,"h":3,"max":1,"group":"utility","zoneSource":true},{"id":"workshop","name":"攻城机器工坊","name_en":"Workshop","w":5,"h":5,"max":1,"group":"utility","zoneSource":true},{"id":"pet_house","name":"战宠小屋","name_en":"Pet House","w":4,"h":4,"max":1,"group":"utility","zoneSource":true},{"id":"blacksmith","name":"铁匠铺","name_en":"Blacksmith","w":3,"h":3,"max":1,"group":"utility","zoneSource":true},{"id":"hero_hall","name":"英雄殿堂","name_en":"Hero Hall","w":4,"h":4,"max":1,"group":"utility","zoneSource":true},{"id":"b_o_b_hut","name":"小博木屋","name_en":"B.O.B. Hut","w":2,"h":2,"max":1,"group":"utility","zoneSource":true},{"id":"bomb","name":"隐形炸弹","name_en":"Bomb","w":1,"h":1,"max":8,"group":"trap","zoneSource":false},{"id":"spring_trap","name":"隐形弹簧","name_en":"Spring Trap","w":1,"h":1,"max":9,"group":"trap","zoneSource":false},{"id":"air_bomb","name":"空中炸弹","name_en":"Air Bomb","w":1,"h":1,"max":8,"group":"trap","zoneSource":false},{"id":"giant_bomb","name":"巨型炸弹","name_en":"Giant Bomb","w":2,"h":2,"max":8,"group":"trap","zoneSource":false},{"id":"seeking_air_mine","name":"搜空地雷","name_en":"Seeking Air Mine","w":1,"h":1,"max":9,"group":"trap","zoneSource":false},{"id":"skeleton_trap","name":"骷髅陷阱","name_en":"Skeleton Trap","w":1,"h":1,"max":4,"group":"trap","zoneSource":false},{"id":"tornado_trap","name":"飓风陷阱","name_en":"Tornado Trap","w":1,"h":1,"max":1,"group":"trap","zoneSource":false},{"id":"giga_bomb","name":"终极炸弹","name_en":"Giga Bomb","w":2,"h":2,"max":1,"group":"trap","zoneSource":false}];
+const CAT = Object.fromEntries(CATALOG_RECORDS.map(o=>[o.id,o]));
+const T = window.TH18Topology; const N=44, STORAGE_KEY='th18-grid-deploy-v0.1';
+const $=id=>document.getElementById(id);
+const canvas=$('board'),ctx=canvas.getContext('2d'),vp=$('viewport');
+const colors={core:'#f2bb72',defense:'#769fe1',wall:'#bdcbd5',resource:'#70b99d',utility:'#a3a3d6',trap:'#e6a46d'};
+let objects=[],serial=0,tool='select',group='all',chosen='town_hall',view='iso';
+let options={grid:true,tint:true,boundary:true,holes:true,coord:false};
+let hover=null,focusUid=null,testPoint=null,drag=null,pan={x:0,y:0},zoom=1;
+let history=[],historyIndex=-1,cvW=500,cvH=600, dpr=1;
+let layoutMask=new Set(),edgeList=[],spawnHoleCells=[];
+function newId(){return 'b'+(++serial)}
+function world(x,y){return view==='iso'?{x:(x-y)*16,y:(x+y)*9}:{x:x*20,y:y*20};}
+function drawPolygon(x,y,w,h,fill,stroke,width=1){let a=world(x,y),b=world(x+w,y),c=world(x+w,y+h),d=world(x,y+h);ctx.beginPath();ctx.moveTo(a.x,a.y);ctx.lineTo(b.x,b.y);ctx.lineTo(c.x,c.y);ctx.lineTo(d.x,d.y);ctx.closePath();if(fill){ctx.fillStyle=fill;ctx.fill();}if(stroke){ctx.strokeStyle=stroke;ctx.lineWidth=width;ctx.stroke();}}
+function measure(){const box=vp.getBoundingClientRect();const width=Math.max(1,Math.round(box.width)),height=Math.max(1,Math.round(box.height));const nextDpr=Math.min(2,window.devicePixelRatio||1);if(width===cvW&&height===cvH&&nextDpr===dpr)return;cvW=width;cvH=height;dpr=nextDpr;const pixelWidth=Math.round(width*dpr),pixelHeight=Math.round(height*dpr);if(canvas.width!==pixelWidth)canvas.width=pixelWidth;if(canvas.height!==pixelHeight)canvas.height=pixelHeight;render();}
+function scene(){let minX=view==='iso'?-N*16:0,maxX=view==='iso'?N*16:N*20,minY=0,maxY=view==='iso'?N*18:N*20;
+ const scale=Math.min((cvW-70)/(maxX-minX+100),(cvH-90)/(maxY-minY+90))*zoom;
+ return {scale,ox:cvW/2-(minX+maxX)/2*scale+pan.x,oy:cvH/2-(minY+maxY)/2*scale+pan.y};}
+function ptEvent(e){const r=canvas.getBoundingClientRect();return {x:e.clientX-r.left,y:e.clientY-r.top}}
+function toCell(px,py){const s=scene(), wx=(px-s.ox)/s.scale, wy=(py-s.oy)/s.scale;let x,y;
+ if(view==='iso'){x=(wx/16+wy/9)/2;y=(wy/9-wx/16)/2;}else{x=wx/20;y=wy/20;}
+ return {x:Math.floor(x+1e-7),y:Math.floor(y+1e-7)};}
+function within(c){return c&&c.x>=0&&c.y>=0&&c.x<N&&c.y<N}
+function findObject(c){if(!within(c))return null;for(let i=objects.length-1;i>=0;i--){const o=objects[i],m=CAT[o.id];if(c.x>=o.x&&c.x<o.x+m.w&&c.y>=o.y&&c.y<o.y+m.h)return o;}return null;}
+function recompute(){layoutMask=T.deploymentMask(objects,CAT,N);edgeList=T.boundaryEdges(layoutMask);spawnHoleCells=T.allowedRegions(layoutMask,N).filter(r=>!r.connects_to_map_edge).flatMap(r=>r.cells);updateStats();render();}
+function snapshot(){const str=JSON.stringify(objects);if(history[historyIndex]===str)return;history=history.slice(0,historyIndex+1);history.push(str);if(history.length>100)history.shift();historyIndex=history.length-1;saveLocal();refreshHistory();}
+function refreshHistory(){$('undo').disabled=historyIndex<=0;$('redo').disabled=historyIndex>=history.length-1;}
+function saveLocal(){try{localStorage.setItem(STORAGE_KEY,JSON.stringify({objects,serial}));}catch(_){}}
+function restoreLocal(){try{const s=localStorage.getItem(STORAGE_KEY);if(!s)return false;const d=JSON.parse(s);return installObjects(d.objects,false);}catch(_){return false}}
+function installObjects(list,showWarnings=true){if(!Array.isArray(list))return false;const good=[],bad=[];let i=0;
+ for(const it of list){if(!it||!CAT[it.id]){bad.push('未知类型');continue;}const obj={uid:'b'+(++i),id:it.id,x:Number(it.x),y:Number(it.y)};let checked=T.placementCheck(good,CAT,obj);if(checked.ok)good.push(obj);else bad.push(checked.reason);}
+ objects=good;serial=i;focusUid=null;history=[];historyIndex=-1;snapshot();recompute();if(showWarnings)toast('已导入 '+good.length+' 个对象'+(bad.length?'，跳过 '+bad.length+' 个不合规对象':''));return true;}
+function makeDemo(){const specs=[['town_hall',20,20],['clan_castle',17,18],['monolith',25,22],['revenge_tower',13,23],['multi_gear_tower',20,13],['super_wizard_tower',14,14],['firespitter',29,17],['scattershot',14,29],['inferno_tower',24,16],['spell_tower',18,25],['air_defense',26,29],['hidden_tesla',24,27],['giant_bomb',11,17],['army_camp',4,15],['gold_storage',30,27]];
+ const demo=[], wall=(x,y)=>specs.push(['wall',x,y]);for(let x=10;x<=34;x++){wall(x,10);wall(x,34);}for(let y=11;y<34;y++){wall(10,y);wall(34,y);}for(const [id,x,y] of specs){const obj={uid:'b'+(demo.length+1),id,x,y};if(T.placementCheck(demo,CAT,obj).ok)demo.push(obj);}return demo;}
+function undo(){if(historyIndex<=0)return;historyIndex--;objects=JSON.parse(history[historyIndex]);focusUid=null;recompute();refreshHistory();saveLocal()}
+function redo(){if(historyIndex>=history.length-1)return;historyIndex++;objects=JSON.parse(history[historyIndex]);focusUid=null;recompute();refreshHistory();saveLocal()}
+function fillGrid(){const s=scene();ctx.save();ctx.setTransform(dpr,0,0,dpr,0,0);ctx.clearRect(0,0,cvW,cvH);ctx.fillStyle='#0e1927';ctx.fillRect(0,0,cvW,cvH);
+ ctx.translate(s.ox,s.oy);ctx.scale(s.scale,s.scale);
+ drawPolygon(-2,-2,N+4,N+4,'#1b3442','#33515c',1.1/s.scale);
+ drawPolygon(0,0,N,N,'#29443f','#79a28d',1.8/s.scale);
+ if(options.grid){ctx.beginPath();for(let i=0;i<=N;i++){let a=world(i,0),b=world(i,N);ctx.moveTo(a.x,a.y);ctx.lineTo(b.x,b.y);a=world(0,i);b=world(N,i);ctx.moveTo(a.x,a.y);ctx.lineTo(b.x,b.y);}ctx.strokeStyle='rgba(201,236,220,.145)';ctx.lineWidth=.8/s.scale;ctx.stroke();}
+ return s;}
+function render(){if(!ctx||!cvH)return;const s=fillGrid();
+ if(options.tint){ctx.fillStyle='rgba(138,79,142,.26)';for(const id of layoutMask){const [x,y]=id.split(',').map(Number);if(x<0||x>=N||y<0||y>=N)continue;drawPolygon(x,y,1,1,'rgba(155,88,163,.26)',null);}}
+ if(options.holes){for(const [x,y] of spawnHoleCells)drawPolygon(x,y,1,1,'rgba(243,195,83,.37)',null);}
+ if(options.boundary&&edgeList.length){ctx.beginPath();for(const [x1,y1,x2,y2] of edgeList){const a=world(x1,y1),b=world(x2,y2);ctx.moveTo(a.x,a.y);ctx.lineTo(b.x,b.y);}ctx.lineCap='round';ctx.lineJoin='round';ctx.strokeStyle='rgba(83,203,233,.55)';ctx.lineWidth=7/s.scale;ctx.stroke();ctx.strokeStyle='#ffffff';ctx.lineWidth=2.2/s.scale;ctx.stroke();}
+ for(const o of objects){const m=CAT[o.id],isExempt=!m.zoneSource,sel=o.uid===focusUid;let fill=colors[m.group]+'c4';if(isExempt)fill='#e2a373b7';drawPolygon(o.x,o.y,m.w,m.h,fill,sel?'#fff4aa':isExempt?'#ffda9e66':'#e7f5ff66',(sel?3:1)/s.scale);
+ if(m.group==='wall')continue;const p=world(o.x+m.w/2,o.y+m.h/2);ctx.save();ctx.translate(p.x,p.y);ctx.textAlign='center';ctx.textBaseline='middle';ctx.font='600 '+(m.w>=4?12:10)+'px sans-serif';ctx.fillStyle='#101725';ctx.strokeStyle='#ffffff55';ctx.lineWidth=.8;const label=m.name.length>5?m.name.slice(0,4):m.name;ctx.fillText(label,0,0);ctx.restore();
+ if(isExempt){let a=world(o.x+.3,o.y+.3);ctx.fillStyle='#fff9c1';ctx.beginPath();ctx.arc(a.x,a.y,2,0,Math.PI*2);ctx.fill();}}
+ if(options.coord){ctx.fillStyle='#e7e9d4';ctx.font='13px sans-serif';for(let n=0;n<=44;n+=4){let a=world(n,0);ctx.fillText(n,a.x,a.y-5);a=world(0,n);ctx.fillText(n,a.x-17,a.y+6);}}
+ if(testPoint&&within(testPoint))drawPolygon(testPoint.x,testPoint.y,1,1,T.deploymentStatus(testPoint.x,testPoint.y,layoutMask)==='blocked'?'#fa555888':'#7dff9c99','#ffffff',2/s.scale);
+ if(hover&&within(hover)){let overlay='#ffffff33',line='#e6fbff';if(tool==='place'){const meta=CAT[chosen];const cand={id:chosen,x:hover.x,y:hover.y};const check=T.placementCheck(objects,CAT,cand);overlay=check.ok?'#7de6cb66':'#ff637d77';line=check.ok?'#a8ffdb':'#ffa6ac';drawPolygon(hover.x,hover.y,meta.w,meta.h,overlay,line,2/s.scale);}else drawPolygon(hover.x,hover.y,1,1,overlay,line,1.6/s.scale);}
+ if(drag&&drag.type==='move'&&drag.preview){const p=drag.preview,m=CAT[p.id],check=T.placementCheck(objects,CAT,p,p.uid);drawPolygon(p.x,p.y,m.w,m.h,check.ok?'#62eaba88':'#ff536e88',check.ok?'#b1ffe6':'#ffc2cb',2.6/s.scale);}
+ ctx.restore();
+}
+function updateStats(){const z=T.stats(objects,CAT,N);$('stat').textContent=`对象 ${z.objects} 个（禁区源 ${z.sources}） · 禁下兵 ${z.blocked} 格 · 可测试下兵 ${z.allowed} 格 · 内部下兵洞 ${z.spawn_holes} 处（${z.spawn_hole_cells} 格） · 白线边段 ${z.edges}`;syncChosen();updateHUD();}
+function syncChosen(){const m=CAT[chosen];const count=objects.filter(x=>x.id===chosen).length;$('chosen').innerHTML='<b>'+m.name+'</b><span>'+m.w+'×'+m.h+' 格 ｜ 已放 '+count+' / '+m.max+' ｜ '+(m.zoneSource?'产生1格禁下兵边缘':'不产生禁下兵边缘')+'</span>';}
+function updateHUD(){let c=hover;let o=c?findObject(c):null;$('hoverText').textContent='坐标：'+(within(c)?'('+c.x+','+c.y+')':'地图之外');const state=within(c)?T.deploymentStatus(c.x,c.y,layoutMask,N):'outside_canvas';$('deployText').textContent='下兵状态：'+(state==='blocked'?'⛔ 禁止':state==='allowed'?'✓ 允许（基础模型）':'地图外侧示意');let s=objects.find(o=>o.uid===focusUid);$('selectedText').textContent='选择：'+(s?CAT[s.id].name+' ('+s.x+','+s.y+')':o?CAT[o.id].name:'—');}
+function toast(msg){const box=$('toast');box.textContent=msg;box.classList.add('show');clearTimeout(toast.timer);toast.timer=setTimeout(()=>box.classList.remove('show'),2200);}
+function changeTool(t){tool=t;for(const b of document.querySelectorAll('#tools button'))b.classList.toggle('active',b.dataset.tool===t);canvas.style.cursor=t==='pan'?'grab':t==='select'?'pointer':'crosshair';render();}
+function setGroup(g){group=g;for(const b of document.querySelectorAll('#groups button'))b.classList.toggle('active',b.dataset.group===g);refreshPicker();}
+function refreshPicker(){const q=$('search').value.trim().toLowerCase();let opts=CATALOG_RECORDS.filter(a=>(group==='all'||a.group===group)&&(a.name.toLowerCase().includes(q)||a.name_en.toLowerCase().includes(q)||a.id.includes(q)));let chosenStill=opts.some(a=>a.id===chosen);if(!chosenStill&&opts.length)chosen=opts[0].id;
+ $('picker').innerHTML=opts.map(a=>'<option value="'+a.id+'">'+a.name+' ['+a.w+'×'+a.h+']</option>').join('');if(opts.length){$('picker').value=chosen;syncChosen();}else $('chosen').innerHTML='没有匹配的建筑';}
+function placeOne(id,x,y,silent=false){const obj={uid:newId(),id,x,y};const check=T.placementCheck(objects,CAT,obj);if(!check.ok){if(!silent)toast(check.reason);return false;}objects.push(obj);recompute();if(!silent)snapshot();return true;}
+function removeAt(c){const o=findObject(c);if(!o)return;objects=objects.filter(x=>x.uid!==o.uid);if(o.uid===focusUid)focusUid=null;recompute();snapshot();}
+function lineCells(a,b){let x0=a.x,y0=a.y,x1=b.x,y1=b.y;const cells=[],dx=Math.abs(x1-x0),dy=Math.abs(y1-y0),sx=x0<x1?1:-1,sy=y0<y1?1:-1;let err=dx-dy;while(true){cells.push({x:x0,y:y0});if(x0===x1&&y0===y1)break;let e2=2*err;if(e2>-dy){err-=dy;x0+=sx}if(e2<dx){err+=dx;y0+=sy;}}return cells;}
+canvas.addEventListener('pointerdown',e=>{const p=ptEvent(e),c=toCell(p.x,p.y);canvas.setPointerCapture(e.pointerId);hover=c;
+ if(e.button===2){removeAt(c);return;}
+ if(e.button===1||e.shiftKey||tool==='pan'){drag={type:'pan',sx:p.x,sy:p.y,ox:pan.x,oy:pan.y};return;}
+ if(tool==='test'){testPoint=within(c)?c:null;toast(within(c)?T.deploymentStatus(c.x,c.y,layoutMask)==='blocked'?'该格禁止下兵':'该格允许下兵（静态判定）':'请点击44×44格内');render();return;}
+ if(tool==='erase'){removeAt(c);drag={type:'erase',last:c.x+','+c.y};return;}
+ if(tool==='place'){if(chosen==='wall'){drag={type:'wall',last:c,changed:false};drag.changed=placeOne('wall',c.x,c.y,true);render();}else placeOne(chosen,c.x,c.y);return;}
+ if(tool==='select'){const o=findObject(c);focusUid=o?o.uid:null;if(o)drag={type:'move',uid:o.uid,id:o.id,dx:c.x-o.x,dy:c.y-o.y,preview:{...o}};render();updateHUD();}
+});
+canvas.addEventListener('pointermove',e=>{const p=ptEvent(e),c=toCell(p.x,p.y);hover=c;
+ if(drag){if(drag.type==='pan'){pan.x=drag.ox+(p.x-drag.sx);pan.y=drag.oy+(p.y-drag.sy);}else if(drag.type==='move'){drag.preview={uid:drag.uid,id:drag.id,x:c.x-drag.dx,y:c.y-drag.dy};}else if(drag.type==='wall'){if(c.x!==drag.last.x||c.y!==drag.last.y){for(const t of lineCells(drag.last,c))if(placeOne('wall',t.x,t.y,true))drag.changed=true;drag.last=c;}}else if(drag.type==='erase'){const k=c.x+','+c.y;if(k!==drag.last){removeAt(c);drag.last=k;}}}updateHUD();render();});
+function endPointer(e){if(!drag)return;if(drag.type==='move'&&drag.preview){const check=T.placementCheck(objects,CAT,drag.preview,drag.uid);if(check.ok){const i=objects.findIndex(o=>o.uid===drag.uid);if(i>=0){objects[i]={...drag.preview};recompute();snapshot();}}else toast(check.reason);}else if(drag.type==='wall'&&drag.changed)snapshot();drag=null;recompute();}
+canvas.addEventListener('pointerup',endPointer);canvas.addEventListener('pointercancel',()=>{drag=null;render();});canvas.addEventListener('contextmenu',e=>e.preventDefault());canvas.addEventListener('pointerleave',()=>{if(!drag){hover=null;updateHUD();render();}});
+canvas.addEventListener('wheel',e=>{e.preventDefault();let before=zoom;zoom=Math.max(.4,Math.min(4.5,zoom*(e.deltaY>0?.90:1.10)));if(before!==zoom)render();},{passive:false});
+window.addEventListener('keydown',e=>{if(['INPUT','TEXTAREA','SELECT'].includes(document.activeElement.tagName))return;if((e.ctrlKey||e.metaKey)&&e.key.toLowerCase()==='z'){e.preventDefault();e.shiftKey?redo():undo();}else if((e.ctrlKey||e.metaKey)&&e.key.toLowerCase()==='y'){e.preventDefault();redo();}else if((e.key==='Backspace'||e.key==='Delete')&&focusUid){objects=objects.filter(o=>o.uid!==focusUid);focusUid=null;recompute();snapshot();}else if(e.key==='Escape'){focusUid=null;drag=null;changeTool('select');}else if(e.key===' '){e.preventDefault();if(!window._spaceTool){window._spaceTool=tool;changeTool('pan');}}});
+window.addEventListener('keyup',e=>{if(e.key===' '&&window._spaceTool){changeTool(window._spaceTool);window._spaceTool=null;}});
+document.querySelectorAll('#tools button').forEach(b=>b.addEventListener('click',()=>changeTool(b.dataset.tool)));
+document.querySelectorAll('#groups button').forEach(b=>b.addEventListener('click',()=>setGroup(b.dataset.group)));
+document.querySelectorAll('[data-view]').forEach(b=>b.addEventListener('click',()=>{view=b.dataset.view;pan={x:0,y:0};zoom=1;document.querySelectorAll('[data-view]').forEach(i=>i.classList.toggle('active',i===b));render();}));
+$('picker').addEventListener('change',e=>{chosen=e.target.value;syncChosen();changeTool('place');});$('search').addEventListener('input',refreshPicker);
+for(const [name,id] of [['grid','showGrid'],['tint','showTint'],['boundary','showBoundary'],['holes','showHoles'],['coord','showCoord']])$(id).addEventListener('change',e=>{options[name]=e.target.checked;render();});
+$('undo').addEventListener('click',undo);$('redo').addEventListener('click',redo);
+$('demo').addEventListener('click',()=>{if(objects.length&&!confirm('载入示例会替换当前阵型，继续吗？'))return;installObjects(makeDemo());toast('示例已载入；并非经过实战验证的阵型');});
+$('clear').addEventListener('click',()=>{if(objects.length&&!confirm('清空全部建筑？'))return;objects=[];focusUid=null;recompute();snapshot();toast('已清空画布');});
+function exportFile(name,contents,mime){const blob=new Blob([contents],{type:mime});const a=document.createElement('a');a.href=URL.createObjectURL(blob);a.download=name;document.body.appendChild(a);a.click();a.remove();setTimeout(()=>URL.revokeObjectURL(a.href),5000);}
+$('save').addEventListener('click',()=>{const doc={format:'coc-th18-layout-v0.1',map:{width:44,height:44,projection:view},rules:{no_deploy_margin_tiles:1,mask:'Chebyshev radius 1 from buildings and walls, excludes traps and hidden Tesla',buildable_mask_verified:false},objects:objects.map(o=>({...o})),statistics:T.stats(objects,CAT)};exportFile('TH18_阵型_'+new Date().toISOString().slice(0,10)+'.json',JSON.stringify(doc,null,2),'application/json');toast('阵型 JSON 已导出');});
+$('load').addEventListener('click',()=>$('file').click());$('file').addEventListener('change',async e=>{const file=e.target.files[0];if(!file)return;try{const s=JSON.parse(await file.text());const ok=installObjects(Array.isArray(s)?s:s.objects);if(!ok)toast('JSON 须包含 objects 数组');}catch(err){toast('读取失败：'+err.message)}e.target.value='';});
+$('shot').addEventListener('click',()=>{const a=document.createElement('a');a.download='TH18_网格与下兵线.png';a.href=canvas.toDataURL('image/png');a.click();});
+refreshPicker();if(!restoreLocal())installObjects(makeDemo(),false);new ResizeObserver(measure).observe(vp);measure();
+</script>
+</body>
+</html>
