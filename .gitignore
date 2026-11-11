@@ -1,0 +1,41 @@
+# OS / editor files
+.DS_Store
+Thumbs.db
+*.swp
+*.swo
+.vscode/
+.idea/
+
+# Python test caches / virtual environments
+__pycache__/
+*.py[cod]
+.pytest_cache/
+.venv/
+venv/
+
+# Node caches / dependencies (not needed for offline app)
+node_modules/
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+
+# Local captures, temporary browser data, generated outputs
+*.tmp
+*.bak
+*.log
+.playwright/
+playwright-report/
+test-results/
+screenshots/
+outputs/
+
+# User-specific layout exports and game captures
+TH18_阵型_*.json
+TH18_网格与下兵线*.png
+
+# Secrets / environment configs
+.env
+.env.*
+!.env.example
+*.pem
+*.key
