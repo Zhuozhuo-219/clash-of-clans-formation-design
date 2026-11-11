@@ -1,0 +1,14 @@
+{
+  "$schema":"https://json-schema.org/draft/2020-12/schema",
+  "$id":"https://github.com/Zhuozhuo-219/clash-of-clans-formation-design/blob/main/schemas/coc-th18-draft-v1.schema.json",
+  "title":"Clash of Clans TH18 model draft","description":"External-LLM proposed geometry and optional heuristic auto placement. Domain validation still required.",
+  "type":"object","required":["format","placements"],
+  "properties":{
+    "format":{"const":"coc-th18-draft-v1"},
+    "description":{"type":"string","maxLength":500},
+    "grid":{"type":"object","required":["width","height"],"properties":{"width":{"const":44},"height":{"const":44}},"additionalProperties":false},
+    "placements":{"type":"array","maxItems":1000,"items":{"type":"object","required":["id","x","y"],"properties":{"id":{"type":"string","pattern":"^[a-z0-9_]+$"},"x":{"type":"integer","minimum":0,"maximum":43},"y":{"type":"integer","minimum":0,"maximum":43}},"additionalProperties":false}},
+    "autoFill":{"type":"array","maxItems":100,"items":{"type":"object","required":["id","count"],"properties":{"id":{"type":"string","pattern":"^[a-z0-9_]+$"},"count":{"oneOf":[{"type":"integer","minimum":0},{"const":"remaining"}]},"region":{"enum":["center","core","north","south","east","west","northeast","northwest","southeast","southwest","distributed","outer"]},"minSeparation":{"type":"number","minimum":0,"maximum":44},"seed":{"type":"integer"}},"additionalProperties":false}}
+  },
+  "additionalProperties":false
+}

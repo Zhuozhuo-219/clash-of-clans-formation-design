@@ -2,7 +2,7 @@
   "format": "application/json",
   "metadata": {
     "title": "部落冲突 国服18本 家乡阵型设计数据快照",
-    "dataset_version": "0.1.0-research-seed",
+    "dataset_version": "0.1.1-footprint-correction",
     "as_of": "2026-11-10",
     "as_of_timezone": "Asia/Shanghai",
     "game": "Clash of Clans",
@@ -14,7 +14,9 @@
     "combat_value_integrity": "International community references only; mainland client stat parity NOT verified",
     "ready_for_full_simulation": false,
     "value_null_semantics": "null = unknown/not applicable as specified; never coerce null to 0",
-    "source_count": 28
+    "source_count": 28,
+    "revision_date": "2026-11-11",
+    "revision_summary": "纠正Army Camp与Workshop由旧5×5到4×4；Town Hall、Hero Hall均已确认为4×4。原始as_of日期不变。"
   },
   "map": {
     "grid": {
@@ -3204,9 +3206,9 @@
         "max_level": 14,
         "count_max_placed": 4,
         "footprint": {
-          "width_tiles": 5,
-          "height_tiles": 5,
-          "area_tiles": 25,
+          "width_tiles": 4,
+          "height_tiles": 4,
+          "area_tiles": 16,
           "shape": "axis_aligned_rectangle"
         },
         "max_level_stats": {
@@ -3260,7 +3262,9 @@
             "cocwiki_buildings"
           ],
           "unverified_fields_policy": "null means unknown, not zero",
-          "notes": []
+          "notes": [
+            "占地已于2026-11-11纠错：4×4，旧版5×5错误。官方历史更新说明明确将兵营及攻城机器工坊缩至4×4；不同于训练营 Barracks。"
+          ]
         }
       },
       {
@@ -3674,9 +3678,9 @@
         "max_level": 9,
         "count_max_placed": 1,
         "footprint": {
-          "width_tiles": 5,
-          "height_tiles": 5,
-          "area_tiles": 25,
+          "width_tiles": 4,
+          "height_tiles": 4,
+          "area_tiles": 16,
           "shape": "axis_aligned_rectangle"
         },
         "max_level_stats": {
@@ -3729,7 +3733,9 @@
             "cocwiki_buildings"
           ],
           "unverified_fields_policy": "null means unknown, not zero",
-          "notes": []
+          "notes": [
+            "占地已于2026-11-11纠错：4×4，旧版5×5错误。官方历史更新说明明确将兵营及攻城机器工坊缩至4×4；不同于训练营 Barracks。"
+          ]
         }
       },
       {
@@ -16209,6 +16215,13 @@
         "trust_level": "cn_community",
         "use_case": "兵种攻击频率与血量、攻击距离的参考，非已校验国服客户端值",
         "reviewed_as_of": "2026-11-10"
+      },
+      {
+        "id": "official_army_camp_workshop_resize",
+        "url": "https://supercell.com/en/games/clashofclans/blog/news/december-update-patch-notes/",
+        "trust_level": "official",
+        "use_case": "2019年12月官方缩减兵营及攻城机器工坊为4x4的历史补丁",
+        "reviewed_as_of": "2026-11-11"
       }
     ],
     "field_contract": {

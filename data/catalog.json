@@ -1,5 +1,5 @@
 {
-  "schema": "th18-catalog-0.1",
+  "schema": "th18-catalog-0.2",
   "target": "CN-TH18",
   "as_of": "2026-11-10",
   "map": {
@@ -15,7 +15,8 @@
       "h": 4,
       "max": 1,
       "group": "core",
-      "zoneSource": true
+      "zoneSource": true,
+      "footprint_source": "cross_checked_2026"
     },
     {
       "id": "crafting_station",
@@ -291,11 +292,12 @@
       "id": "army_camp",
       "name": "兵营",
       "name_en": "Army Camp",
-      "w": 5,
-      "h": 5,
+      "w": 4,
+      "h": 4,
       "max": 4,
       "group": "utility",
-      "zoneSource": true
+      "zoneSource": true,
+      "footprint_source": "official_resize_2019"
     },
     {
       "id": "barracks",
@@ -361,11 +363,12 @@
       "id": "workshop",
       "name": "攻城机器工坊",
       "name_en": "Workshop",
-      "w": 5,
-      "h": 5,
+      "w": 4,
+      "h": 4,
       "max": 1,
       "group": "utility",
-      "zoneSource": true
+      "zoneSource": true,
+      "footprint_source": "official_resize_2019"
     },
     {
       "id": "pet_house",
@@ -395,7 +398,8 @@
       "h": 4,
       "max": 1,
       "group": "utility",
-      "zoneSource": true
+      "zoneSource": true,
+      "footprint_source": "cross_checked_2026"
     },
     {
       "id": "b_o_b_hut",
@@ -487,5 +491,6 @@
       "group": "trap",
       "zoneSource": false
     }
-  ]
+  ],
+  "verified_geometry_as_of": "2026-11-11"
 }

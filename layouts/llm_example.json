@@ -1,0 +1,127 @@
+{
+  "format": "coc-th18-layout-v0.2",
+  "game": "clash-of-clans",
+  "server": "CN",
+  "townHall": 18,
+  "map": {
+    "width": 44,
+    "height": 44,
+    "projection": "iso"
+  },
+  "rules": {
+    "no_deploy_margin_tiles": 1,
+    "excluded_zone_sources": [
+      "hidden_tesla",
+      "traps"
+    ],
+    "buildable_mask_verified": false
+  },
+  "metadata": {
+    "created_by": "external-model draft through layout-cli",
+    "description": "18本反三星骨架演示：分散防空，偏置反击塔，不代表实战最优",
+    "source_draft": "examples/llm_draft.json"
+  },
+  "objects": [
+    {
+      "uid": "p1",
+      "id": "town_hall",
+      "x": 19,
+      "y": 19
+    },
+    {
+      "uid": "p2",
+      "id": "hero_hall",
+      "x": 9,
+      "y": 20
+    },
+    {
+      "uid": "p3",
+      "id": "clan_castle",
+      "x": 24,
+      "y": 20
+    },
+    {
+      "uid": "p4",
+      "id": "revenge_tower",
+      "x": 20,
+      "y": 11
+    },
+    {
+      "uid": "p5",
+      "id": "monolith",
+      "x": 29,
+      "y": 26
+    },
+    {
+      "uid": "p6",
+      "id": "hidden_tesla",
+      "x": 18,
+      "y": 27
+    },
+    {
+      "uid": "p7",
+      "id": "giant_bomb",
+      "x": 15,
+      "y": 24
+    },
+    {
+      "uid": "auto-0-0",
+      "id": "air_defense",
+      "x": 24,
+      "y": 23
+    },
+    {
+      "uid": "auto-0-1",
+      "id": "air_defense",
+      "x": 4,
+      "y": 21
+    },
+    {
+      "uid": "auto-0-2",
+      "id": "air_defense",
+      "x": 40,
+      "y": 35
+    },
+    {
+      "uid": "auto-0-3",
+      "id": "air_defense",
+      "x": 17,
+      "y": 4
+    },
+    {
+      "uid": "auto-1-0",
+      "id": "scattershot",
+      "x": 29,
+      "y": 23
+    },
+    {
+      "uid": "auto-1-1",
+      "id": "scattershot",
+      "x": 9,
+      "y": 17
+    },
+    {
+      "uid": "auto-2-0",
+      "id": "firespitter",
+      "x": 27,
+      "y": 20
+    },
+    {
+      "uid": "auto-2-1",
+      "id": "firespitter",
+      "x": 7,
+      "y": 24
+    }
+  ],
+  "statistics": {
+    "n": 44,
+    "total": 1936,
+    "blocked": 286,
+    "allowed": 1650,
+    "sources": 13,
+    "objects": 15,
+    "edges": 160,
+    "spawn_holes": 0,
+    "spawn_hole_cells": 0
+  }
+}

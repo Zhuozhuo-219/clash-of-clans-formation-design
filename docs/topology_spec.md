@@ -57,3 +57,7 @@ const totals = TH18Topology.stats(objects,CATALOG,44);
 ```
 
 查证依据：`https://clash-of-clans.1337wiki.com/walls-home-village/`、`https://clashofclans.fandom.com/wiki/Layouts`、`https://clash-of-clans.1337wiki.com/hidden-tesla-home-village/`；项目源快照 `coc_th18_cn_2026-11-10.json`。
+
+## 2026-11-11 数据纠错
+
+兵营(Army Camp)、攻城机器工坊(Workshop)、大本营(Town Hall)、英雄殿堂(Hero Hall)均为4×4。旧5×5记录已修正。相关历史依据为 Supercell 2019 December Update Patch Notes；`src/catalog.generated.mjs` 与 `data/catalog.json` 必须保持一致。

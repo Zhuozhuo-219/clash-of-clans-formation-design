@@ -1,13 +1,6 @@
-/* TH18 44x44 static layout geometry / deployment mask v0.1.0
- * The one-tile square expansion is a research baseline, not a CN-client certified simulation.
- * No-deploy generator: ordinary placed buildings and walls YES; traps and Hidden Tesla NO.
+/* Shared pure ES module: geometry, occupancy, no-deploy masks, connectivity.
+ * 1-tile dilation is a provisional research rule, not a certified CN-client model.
  */
-(function (root, factory) {
-  const api = factory();
-  if (typeof module === 'object' && module.exports) module.exports = api;
-  if (root) root.TH18Topology = api;
-})(typeof globalThis !== 'undefined' ? globalThis : this, function () {
-  'use strict';
   const GRID = 44;
   const key = (x, y) => x + ',' + y;
   function blockDims(b, catalog) {
@@ -106,5 +99,4 @@
     }
     return problems;
   }
-  return {GRID,key,boundsCheck,placementCheck,deploymentMask,boundaryEdges,deploymentStatus,allowedRegions,stats,validateLayout};
-});
+export {GRID,key,boundsCheck,placementCheck,deploymentMask,boundaryEdges,deploymentStatus,allowedRegions,stats,validateLayout};

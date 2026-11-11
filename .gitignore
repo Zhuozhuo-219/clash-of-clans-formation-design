@@ -39,3 +39,12 @@ TH18_网格与下兵线*.png
 !.env.example
 *.pem
 *.key
+
+# Future bundlers and generated build outputs
+dist/
+coverage/
+.next/
+.svelte-kit/
+
+# local secrets
+*.local

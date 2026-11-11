@@ -1,0 +1,19 @@
+name: TH18 Geometry and Model Draft Checks
+on:
+  push:
+    branches: [main]
+  pull_request:
+permissions:
+  contents: read
+jobs:
+  validate:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - name: Unit tests
+        run: npm test
+      - name: Validate model draft and layout JSON snapshots
+        run: node scripts/validate-all.mjs

@@ -142,6 +142,19 @@
       ],
       "summary": "攻击范围、触发范围、索敌范围、弹射半径、溅射半径及射速是不同量，DPS不等于单击伤害，未查到的必须null。",
       "resolution": "导入国服数值时先规范单位/模式，再计算真实有效DPS。"
+    },
+    {
+      "id": "FOOTPRINT-01",
+      "severity": "resolved",
+      "field_paths": [
+        "buildings.army_camp.footprint",
+        "buildings.workshop.footprint",
+        "buildings.town_hall.footprint",
+        "buildings.hero_hall.footprint"
+      ],
+      "summary": "兵营Army Camp及攻城机器工坊Workshop旧版均误记5×5；官方2019年历史补丁已改为4×4。大本营、英雄殿堂核验4×4。",
+      "resolution": "已同步核心JSON、编辑器catalog；新增尺寸回归测试。参考Supercell 2019 December Update Patch Notes、Goblins Farm 2026、GiBiArena 2026。国服地图边缘规则仍待实测。"
     }
-  ]
+  ],
+  "revision_date": "2026-11-11"
 }

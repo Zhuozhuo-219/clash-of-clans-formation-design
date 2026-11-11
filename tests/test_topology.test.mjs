@@ -1,7 +1,6 @@
-const assert=require('assert');
-const T=require('../src/topology.js');
-const records=require('../data/catalog.json').objects;
-const C=Object.fromEntries(records.map(r=>[r.id,r]));
+import assert from 'node:assert/strict';
+import * as T from '../src/topology.mjs';
+import {CAT as C} from '../src/catalog.generated.mjs';
 assert.equal(T.GRID,44);
 assert.equal(C.hidden_tesla.zoneSource,false);
 assert.equal(C.giant_bomb.zoneSource,false);
